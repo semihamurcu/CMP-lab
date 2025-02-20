@@ -1,0 +1,80 @@
+1. Ingress Controller Installeren (indien nodig)
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+kubectl get pods -n ingress-nginx
+
+
+2. Een Demo Webserver Deployen
+
+nano demo-web-deployment.yaml
+
+
+
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-web
+  template:
+    metadata:
+      labels:
+        app: demo-web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+kubectl apply -f demo-web-deployment.yaml
+
+
+3. De Service maken
+
+ nano demo-web-service.yaml
+
+    apiVersion: v1
+kind: Service
+metadata:
+  name: demo-web-service
+spec:
+  selector:
+    app: demo-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+
+ kubectl apply -f demo-web-service.yaml
+
+4. Ingress Regel Aanmaken
+
+nano demo-web-ingress.yaml
+ 
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-web-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: demo.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo-web-service
+                port:
+                  number: 80
+
