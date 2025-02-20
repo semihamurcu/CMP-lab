@@ -1,0 +1,13 @@
+Demonstreer een Kubernetes management interface/dashboard met twee werkende metrics voor jouw cluster
+
+Stap 1: Pas de metrics-server aan
+kubectl patch deployment metrics-server -n kube-system --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+
+Stap 2: Pods herstarten
+kubectl delete pod -n kube-system -l k8s-app=metrics-server
+kubectl get pods -n kube-system | grep metrics-server
+
+Tussenstap:
+Stap 1: Controleer of de metrics-server draait
+kubectl get deployment metrics-server -n kube-system
+
