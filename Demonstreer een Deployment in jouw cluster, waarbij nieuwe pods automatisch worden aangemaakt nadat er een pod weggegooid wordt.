@@ -1,0 +1,27 @@
+1. Maak een voorbeeld Deployment YAML-bestand
+#Maak een bestand aan, bijvoorbeeld nginx-deployment.yaml, met de volgende inhoud. Dit zorgt ervoor dat er altijd 3 replicas van een nginx pod draaien. Als een pod wegvalt, wordt automatisch een nieuwe pod gestart.
+  
+  nano nginx-deployment.yaml
+
+    apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+
+
