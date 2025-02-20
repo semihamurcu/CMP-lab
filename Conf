@@ -1,0 +1,39 @@
+
+
+Stap 1: Installeer Kubernetes Dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+Controleer of de pods draaien:
+kubectl get pods -n kubernetes-dashboard
+
+Stap 2: Maak een Service Account voor toegang
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: semih-admin
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: semih-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: semih-admin
+  namespace: kubernetes-dashboard
+EOF
+
+
+Genereer een toegangstoken en copy de code:
+kubectl -n kubernetes-dashboard create token semih-admin
+
+
+Stap 3: Toegang krijgen tot het Dashboard
+kubectl proxy
+
+
